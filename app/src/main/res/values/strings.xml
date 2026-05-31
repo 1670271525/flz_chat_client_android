@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">FLZ Chat</string>
+    <string name="tab_chat">聊天</string>
+    <string name="tab_friends">好友</string>
+    <string name="tab_agent">智能体</string>
+    <string name="tab_social">社交</string>
+    <string name="tab_me">我</string>
+    <string name="login">登录</string>
+    <string name="register">注册</string>
+    <string name="account_hint">用户名 / 邮箱 / 手机</string>
+    <string name="password_hint">密码</string>
+    <string name="no_account">还没有账号？去注册</string>
+    <string name="has_account">已有账号？去登录</string>
+    <string name="send">发送</string>
+    <string name="hint_message">输入消息…</string>
+    <string name="hint_agent">向智能体提问…</string>
+    <string name="post_social">发动态</string>
+    <string name="friends">好友</string>
+    <string name="edit_profile">编辑资料</string>
+    <string name="logout">退出登录</string>
+    <string name="search_user">搜索用户</string>
+    <string name="ws_connecting">长连接连接中…</string>
+    <string name="ws_connected">实时通道已就绪</string>
+    <string name="ws_disconnected">实时通道未连接</string>
+    <string name="ws_disconnected_banner">服务器连接断开</string>
+    <string name="ws_service_disconnected">服务连接已断开</string>
+    <string name="agent_welcome">你好，我是 FLZ 智能助手，基于 flz_agent SSE 流式对话。</string>
+    <string name="agent_type_chat">对话</string>
+    <string name="agent_streaming">正在思考…</string>
+    <string name="login_required">请先登录后使用</string>
+    <string name="loading">加载中…</string>
+    <string name="empty_conversations">暂无会话，去好友里发起聊天吧</string>
+    <string name="empty_social">好友圈暂无动态</string>
+    <string name="new_agent_chat">新对话</string>
+    <string name="empty_agent_sessions">还没有对话，发送第一条消息后会保存在这里</string>
+
+    <string-array name="gender_options">
+        <item>未知</item>
+        <item>男</item>
+        <item>女</item>
+    </string-array>
+
+    <string-array name="mood_options">
+        <item>在线</item>
+        <item>忙碌</item>
+        <item>离开</item>
+        <item>勿扰</item>
+        <item>隐身</item>
+    </string-array>
+</resources>

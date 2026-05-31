@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 墨黑 + 白色极简风格 -->
+    <color name="bg_page">#FFFFFF</color>
+    <color name="bg_elevated">#FFFFFF</color>
+    <color name="bg_input">#F5F5F5</color>
+    <color name="bg_card">#FFFFFF</color>
+    <color name="bg_nav">#FFFFFF</color>
+
+    <color name="primary">#111111</color>
+    <color name="primary_dark">#000000</color>
+    <color name="primary_light">#333333</color>
+    <color name="primary_muted">#EEEEEE</color>
+    <color name="accent">#111111</color>
+    <color name="accent_warm">#666666</color>
+
+    <color name="text_primary">#111111</color>
+    <color name="text_secondary">#666666</color>
+    <color name="text_hint">#999999</color>
+    <color name="text_on_primary">#FFFFFF</color>
+
+    <color name="divider">#E5E5E5</color>
+    <color name="bubble_self">#111111</color>
+    <color name="bubble_other">#F0F0F0</color>
+    <color name="bubble_agent">#F5F5F5</color>
+    <color name="error">#D32F2F</color>
+    <color name="unread_dot">#111111</color>
+    <color name="chip_bg">#EEEEEE</color>
+    <color name="overlay_scrim">#66000000</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="like_active">#E91E8C</color>
+</resources>
