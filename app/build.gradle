@@ -16,7 +16,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         // 模拟器访问本机服务；真机调试请改为电脑局域网 IP
-        buildConfigField "String", "BUSINESS_BASE_URL", "\"http://192.168.10.24:8087\""
+        buildConfigField "String", "BUSINESS_BASE_URL", "\"http://192.168.43.54:8087\""
         buildConfigField "String", "WS_CHAT_PATH", "\"/flz/chat\""
         buildConfigField "String", "WS_HOST", "\"192.168.110.10\""
         buildConfigField "int", "WS_PORT", "8071"

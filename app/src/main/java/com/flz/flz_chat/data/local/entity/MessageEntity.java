@@ -32,4 +32,6 @@ public class MessageEntity {
     /** pending=发送中, sent=已确认, failed=失败 */
     public String status;
     public boolean isSelf;
+    /** 是否为智能代答/智能体代发的消息（senderId 仍为当前用户） */
+    public boolean isAgent;
 }

@@ -143,6 +143,12 @@ class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.VH> {
         if (message.type == 2) {
             return "[图片]";
         }
+        if (message.type == 4) {
+            return "[视频]";
+        }
+        if (message.isAgent && message.isSelf) {
+            return "（智能代答）" + message.content;
+        }
         return message.content;
     }
 

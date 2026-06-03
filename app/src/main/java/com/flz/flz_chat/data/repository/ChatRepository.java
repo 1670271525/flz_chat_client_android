@@ -128,10 +128,14 @@ public class ChatRepository {
 
     /** 同步写入待发送消息，便于 UI 立即刷新 */
     public void insertPendingSync(long conversationId, String content, String clientMsgId) {
-        insertPendingSync(conversationId, 1, content, clientMsgId);
+        insertPendingSync(conversationId, 1, content, clientMsgId, false);
     }
 
     public void insertPendingSync(long conversationId, int type, String content, String clientMsgId) {
+        insertPendingSync(conversationId, type, content, clientMsgId, false);
+    }
+
+    public void insertPendingSync(long conversationId, int type, String content, String clientMsgId, boolean isAgent) {
         MessageEntity e = new MessageEntity();
         e.ownerUserId = ownerUserId();
         e.messageId = 0;
@@ -143,19 +147,29 @@ public class ChatRepository {
         e.createdAt = String.valueOf(System.currentTimeMillis());
         e.status = "pending";
         e.isSelf = true;
+        e.isAgent = isAgent;
         db.messageDao().insert(e);
-        String preview = type == 1 ? content : "[媒体消息]";
+        String preview;
+        if (type == 1) preview = content;
+        else if (type == 2) preview = "[图片]";
+        else if (type == 4) preview = "[视频]";
+        else preview = "[媒体消息]";
         db.conversationDao().updateLastMessage(ownerUserId(), conversationId, preview, 0, System.currentTimeMillis());
         refreshConversationUnread(conversationId);
     }
 
     public void sendImageMessage(long conversationId, String objectKey, String clientMsgId, ApiCallback<Long> cb) {
+        sendMediaMessage(conversationId, 2, objectKey, clientMsgId, "{\"size\":0}", cb);
+    }
+
+    public void sendMediaMessage(long conversationId, int type, String objectKey, String clientMsgId,
+                                 String mediaMeta, ApiCallback<Long> cb) {
         ChatDtos.SendMessageRequest req = new ChatDtos.SendMessageRequest();
         req.conversationId = conversationId;
-        req.type = 2;
+        req.type = type;
         req.content = objectKey;
         req.clientMsgId = clientMsgId;
-        req.mediaMeta = "{\"size\":0}";
+        req.mediaMeta = mediaMeta != null ? mediaMeta : "{\"size\":0}";
         api.sendMessage(req).enqueue(new ApiCallback<com.flz.flz_chat.data.remote.dto.FileDtos.SendMessageResponse>() {
             @Override
             public void onSuccess(com.flz.flz_chat.data.remote.dto.FileDtos.SendMessageResponse data) {
@@ -226,6 +240,10 @@ public class ChatRepository {
 
     /** 同步写入待发送消息（阻塞，便于发送流程立即更新 content） */
     public void insertPendingSyncBlocking(long conversationId, int type, String content, String clientMsgId) {
+        insertPendingSyncBlocking(conversationId, type, content, clientMsgId, false);
+    }
+
+    public void insertPendingSyncBlocking(long conversationId, int type, String content, String clientMsgId, boolean isAgent) {
         MessageEntity e = new MessageEntity();
         e.ownerUserId = ownerUserId();
         e.messageId = 0;
@@ -237,8 +255,13 @@ public class ChatRepository {
         e.createdAt = String.valueOf(System.currentTimeMillis());
         e.status = "pending";
         e.isSelf = true;
+        e.isAgent = isAgent;
         db.messageDao().insert(e);
-        String preview = type == 1 ? content : "[媒体消息]";
+        String preview;
+        if (type == 1) preview = content;
+        else if (type == 2) preview = "[图片]";
+        else if (type == 4) preview = "[视频]";
+        else preview = "[媒体消息]";
         db.conversationDao().updateLastMessage(ownerUserId(), conversationId, preview, 0, System.currentTimeMillis());
         refreshConversationUnread(conversationId);
     }
@@ -305,6 +328,7 @@ public class ChatRepository {
         }
         e.status = "sent";
         e.isSelf = senderId == myUserId;
+        e.isAgent = false;
         db.messageDao().insert(e);
         String preview = type == 1 ? content : "[媒体消息]";
         db.conversationDao().updateLastMessage(ownerUserId, conversationId, preview, messageId, System.currentTimeMillis());

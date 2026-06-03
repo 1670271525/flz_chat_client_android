@@ -30,7 +30,7 @@ import com.flz.flz_chat.data.local.entity.SocialEntity;
                 AgentSessionEntity.class,
                 AgentMessageEntity.class
         },
-        version = 5,
+        version = 6,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -61,6 +61,15 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+    private static final Migration MIGRATION_5_6 = new Migration(5, 6) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase db) {
+            if (!columnExists(db, "messages", "isAgent")) {
+                db.execSQL("ALTER TABLE `messages` ADD COLUMN `isAgent` INTEGER NOT NULL DEFAULT 0");
+            }
+        }
+    };
+
     public abstract ConversationDao conversationDao();
     public abstract MessageDao messageDao();
     public abstract FriendDao friendDao();
@@ -75,7 +84,7 @@ public abstract class AppDatabase extends RoomDatabase {
                                     context.getApplicationContext(),
                                     AppDatabase.class,
                                     "flz_chat.db")
-                            .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                            .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
                             .build();
                 }
             }
@@ -150,16 +159,29 @@ public abstract class AppDatabase extends RoomDatabase {
                 "`clientMsgId` TEXT, " +
                 "`createdAt` TEXT, " +
                 "`status` TEXT, " +
-                "`isSelf` INTEGER NOT NULL)");
+                "`isSelf` INTEGER NOT NULL, " +
+                "`isAgent` INTEGER NOT NULL)");
         if (tableExists(db, "messages")) {
             if (columnExists(db, "messages", "ownerUserId")) {
-                db.execSQL("INSERT INTO `messages_new` " +
-                        "(`localId`,`ownerUserId`,`messageId`,`conversationId`,`senderId`,`type`,`content`,`clientMsgId`,`createdAt`,`status`,`isSelf`) " +
-                        "SELECT `localId`,`ownerUserId`,`messageId`,`conversationId`,`senderId`,`type`,`content`,`clientMsgId`,`createdAt`,`status`,`isSelf` FROM `messages`");
+                if (columnExists(db, "messages", "isAgent")) {
+                    db.execSQL("INSERT INTO `messages_new` " +
+                            "(`localId`,`ownerUserId`,`messageId`,`conversationId`,`senderId`,`type`,`content`,`clientMsgId`,`createdAt`,`status`,`isSelf`,`isAgent`) " +
+                            "SELECT `localId`,`ownerUserId`,`messageId`,`conversationId`,`senderId`,`type`,`content`,`clientMsgId`,`createdAt`,`status`,`isSelf`,`isAgent` FROM `messages`");
+                } else {
+                    db.execSQL("INSERT INTO `messages_new` " +
+                            "(`localId`,`ownerUserId`,`messageId`,`conversationId`,`senderId`,`type`,`content`,`clientMsgId`,`createdAt`,`status`,`isSelf`,`isAgent`) " +
+                            "SELECT `localId`,`ownerUserId`,`messageId`,`conversationId`,`senderId`,`type`,`content`,`clientMsgId`,`createdAt`,`status`,`isSelf`,0 FROM `messages`");
+                }
             } else {
-                db.execSQL("INSERT INTO `messages_new` " +
-                        "(`localId`,`ownerUserId`,`messageId`,`conversationId`,`senderId`,`type`,`content`,`clientMsgId`,`createdAt`,`status`,`isSelf`) " +
-                        "SELECT `localId`,0,`messageId`,`conversationId`,`senderId`,`type`,`content`,`clientMsgId`,`createdAt`,`status`,`isSelf` FROM `messages`");
+                if (columnExists(db, "messages", "isAgent")) {
+                    db.execSQL("INSERT INTO `messages_new` " +
+                            "(`localId`,`ownerUserId`,`messageId`,`conversationId`,`senderId`,`type`,`content`,`clientMsgId`,`createdAt`,`status`,`isSelf`,`isAgent`) " +
+                            "SELECT `localId`,0,`messageId`,`conversationId`,`senderId`,`type`,`content`,`clientMsgId`,`createdAt`,`status`,`isSelf`,`isAgent` FROM `messages`");
+                } else {
+                    db.execSQL("INSERT INTO `messages_new` " +
+                            "(`localId`,`ownerUserId`,`messageId`,`conversationId`,`senderId`,`type`,`content`,`clientMsgId`,`createdAt`,`status`,`isSelf`,`isAgent`) " +
+                            "SELECT `localId`,0,`messageId`,`conversationId`,`senderId`,`type`,`content`,`clientMsgId`,`createdAt`,`status`,`isSelf`,0 FROM `messages`");
+                }
             }
             db.execSQL("DROP TABLE `messages`");
         }
